@@ -1,7 +1,5 @@
 const express = require('express')
 require('./db/mongoose')
-const User = require('./models/users')
-const tasks = require('./models/tasks')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -14,6 +12,9 @@ app.get('',(req,res)=>{
     })
 })
 
+//Users
+const User = require('./models/users')
+
 app.post('/users', (req,res)=>{
     const user = new User(req.body)
 
@@ -24,14 +25,60 @@ app.post('/users', (req,res)=>{
     })
 })
 
+app.get('/users',(req,res)=>{
+    User.find({}).then((users)=>{
+        res.status(202).send(users)
+    }).catch((e)=>{
+        res.status(503).send(e)
+    })
+})
+
+app.get('/user/:id',(req,res)=>{
+    const _id = req.params.id
+    User.findById(_id).then((user)=>{
+        if(!user){
+            return res.status(404).send()
+        }
+        res.status(202).send(user)
+    }).catch((e)=>{
+        res.status(503).send(e)
+    })
+})
+
+
+//tasks
+const Tasks = require('./models/tasks')
+
 app.post('/tasks',(req,res)=>{
-    const task = new tasks(req.body)
+    const task = new Tasks(req.body)
 
     task.save().then((task)=>{
         res.status(201).send(task)
     }).catch((e)=>{
 
         res.status(406).send(e)
+    })
+})
+
+
+app.get('/tasks',(req,res)=>{
+    Tasks.find({}).then((task)=>{
+        res.status(202).send(task)
+    }).catch((e)=>{
+        res.status(503).send(e)
+    })
+})
+
+app.get('/task/:id',(req,res)=>{
+    const _id = req.params.id
+
+    Tasks.findById(_id).then((task)=>{
+        if(!task){
+            return res.status(404).send()
+        }
+        res.status(202).send(task)
+    }).catch((e)=>{
+        res.status(503).send(e) 
     })
 })
 
