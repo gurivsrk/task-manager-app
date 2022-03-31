@@ -15,71 +15,77 @@ app.get('',(req,res)=>{
 //Users
 const User = require('./models/users')
 
-app.post('/users', (req,res)=>{
+app.post('/users', async (req,res)=>{
     const user = new User(req.body)
-
-    user.save().then((result)=>{
-        res.status(201).send(result)
-    }).catch((e)=>{
+    try{
+       const u = await user.save()
+       res.status(201).send(u)
+    }catch(e){
         res.status(406).send(e)
-    })
+    }
 })
 
-app.get('/users',(req,res)=>{
-    User.find({}).then((users)=>{
+app.get('/users', async (req,res)=>{
+    try{
+       const users = await User.find({})
         res.status(202).send(users)
-    }).catch((e)=>{
+    }catch(e){
         res.status(503).send(e)
-    })
+    }
 })
 
-app.get('/user/:id',(req,res)=>{
+app.get('/user/:id', async (req,res)=>{
     const _id = req.params.id
-    User.findById(_id).then((user)=>{
+    try{
+        const user = await User.findById(_id)
         if(!user){
             return res.status(404).send()
         }
         res.status(202).send(user)
-    }).catch((e)=>{
+    }catch(e){
         res.status(503).send(e)
-    })
+    }
+
 })
 
 
 //tasks
 const Tasks = require('./models/tasks')
 
-app.post('/tasks',(req,res)=>{
+app.post('/tasks', async (req,res)=>{
     const task = new Tasks(req.body)
-
-    task.save().then((task)=>{
-        res.status(201).send(task)
-    }).catch((e)=>{
-
+    try{
+       const t = await task.save()
+       res.status(201).send(t)
+    }catch(e){
         res.status(406).send(e)
-    })
+    }
 })
 
 
-app.get('/tasks',(req,res)=>{
-    Tasks.find({}).then((task)=>{
-        res.status(202).send(task)
-    }).catch((e)=>{
-        res.status(503).send(e)
-    })
-})
-
-app.get('/task/:id',(req,res)=>{
-    const _id = req.params.id
+app.get('/tasks', async (req,res)=>{
     
-    Tasks.findById(_id).then((task)=>{
+    try{
+        const tasks = await Tasks.find({})
+        res.status(202).send(tasks)
+    }catch(e){
+        res.status(503).send(e)
+    }
+
+})
+
+app.get('/task/:id', async (req,res)=>{
+    const _id = req.params.id
+
+    try{
+        const task = await Tasks.findById(_id)
         if(!task){
             return res.status(404).send()
         }
         res.status(202).send(task)
-    }).catch((e)=>{
-        res.status(503).send(e) 
-    })
+    }catch(e){
+        res.status(503).send(e)
+    }
 })
 
 app.listen(port, ()=>{
