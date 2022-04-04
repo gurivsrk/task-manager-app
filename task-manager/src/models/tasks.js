@@ -1,6 +1,6 @@
 const { mongoose , validator } = require('../db/mongoose')
 
-const tasks = mongoose.model('tasks',{
+const taskSchema = new mongoose.Schema({
     description:{
         type: String,
         trim: true,
@@ -11,5 +11,7 @@ const tasks = mongoose.model('tasks',{
         default: false
     } 
 })
+
+const tasks = mongoose.model('tasks',taskSchema)
 
 module.exports = tasks

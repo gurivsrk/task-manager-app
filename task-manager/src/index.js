@@ -29,21 +29,34 @@ app.listen(port, ()=>{
 })
 
 
-////testing encryption
-const bcrypt = require('bcryptjs')
+// ////testing encryption
+// const bcrypt = require('bcryptjs')
 
-const tBcrypt =  ()=>{
-    const hashed = bcrypt.hash('test',8)
-    hashed.then((r)=>{
-        console.log('hashN',r)
-    })
+// const tBcrypt =  ()=>{
+//     const hashed = bcrypt.hash('test',8)
+//     hashed.then((r)=>{
+//         console.log('hashN',r)
+//     })
     
-} 
-const  tBcryptAsync = async ()=>{
-    const hashed = await bcrypt.hash('test',8)
-        console.log(hashed)
-        console.log(await bcrypt.compare('t4est',hashed))
-} 
+// } 
+// const  tBcryptAsync = async ()=>{
+//     const hashed = await bcrypt.hash('test',8)
+//         console.log(hashed)
+//         console.log(await bcrypt.compare('test',hashed))
+// } 
 
-tBcrypt()
-tBcryptAsync()
+// tBcrypt()
+// tBcryptAsync()
+
+// ////testing jwt
+// const jwt = require('jsonwebtoken')
+
+// const myfunction =  ()=>{
+//     const token = jwt.sign({_id:'abc123'},'mystringtojsonwebtoken',{expiresIn: '5 second'})
+//         //console.log(token)
+//         setTimeout(()=>{
+//             const data = jwt.verify(token,'mystringtojsonwebtoken')
+//             console.log(data)
+//         },4200)
+// }
+// myfunction()

@@ -45,13 +45,15 @@ route.patch('/task/:id', async (req,res)=>{
     const isValidOption = updatesElements.every((element) => allowedOptions.includes(element))
 
     if(!isValidOption){
-        console.log(isValidOption);
         return res.status(406).send({erorr: 'Invalid option'})
     }
 
     try{
-        const task = await Tasks.findByIdAndUpdate(req.params.id,req.body,{ new:true, runValidators:true})
-        
+        const task = await Tasks.findById(req.params.id)
+
+        updatesElements.forEach((element) => task[element] = req.body[element])
+        await task.save()
+
         if(!task){
             return res.status(404).send('Task Not Found')
         }

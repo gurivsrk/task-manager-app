@@ -7,9 +7,23 @@ router.post('/users', async (req,res)=>{
     const user = new User(req.body)
     try{
        const u = await user.save()
-       res.status(201).send(u)
+       const uToken = await u.generateJwtToken()
+
+       res.status(201).send({user:u, token:uToken})
     }catch(e){
         res.status(406).send(e)
+    }
+})
+
+router.post('/user/login', async (req, res) => {
+    try{
+        const user = await User.getByCredentials(req.body.email, req.body.password)
+        const token = await user.generateJwtToken()
+        res.send({user,token})
+
+    }catch(error){
+        console.log(error);
+        res.status(400).send({'error':error})
     }
 })
 
@@ -45,7 +59,12 @@ router.patch('/user/:id', async (req,res)=>{
         return res.status(406).send({ error:'Invalid Updates option!' })
     }
     try{
-        const user = await User.findByIdAndUpdate(req.params.id,req.body,{ new: true, runValidators: true})
+        const user = await User.findById(req.params.id)
+
+        updates.forEach((update) => user[update] = req.body[update])
+
+        await user.save()
+
         if(!user){
             return res.status(404).send('No user found')
         }
