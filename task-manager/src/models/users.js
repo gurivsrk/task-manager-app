@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.generateJwtToken = async function(){
     const user = this
-    const token = jwt.sign({_id:user.id.toString()}, 'mystringtojsonwebtoken')
+    const token = jwt.sign({_id:user.id.toString()},'privateorpublickey')
 
     user.token = user.token.concat({token})
     await user.save()
