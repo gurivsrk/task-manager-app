@@ -7,15 +7,17 @@ const auth = async(req,res,next)=>{
         
         const uToken = req.header('Authorization').replace('Bearer ', '')
         const data = jwt.verify(uToken,'privateorpublickey')
-        const user = await User.findOne({_id:data._id, 'tokens.token':uToken})
+        const user = await User.findOne({_id:data._id, 'token.token':uToken})
+
         if(!user){
             throw new Error
         }
+ 
+        req.outhToken = uToken
         req.user = user
-
-        next()
+        next()                                                                      
     }catch(e){
-        res.status(401).send({erorr:'Fail to authenticate'})
+        res.status(401).send({error:'Fail to authenticate'})
     }
 }
 module.exports = auth
