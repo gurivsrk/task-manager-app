@@ -1,6 +1,7 @@
 const { mongoose , validator  } = require('../db/mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const task = require('./tasks')
 
 const userSchema = new mongoose.Schema(
     {
@@ -47,12 +48,23 @@ const userSchema = new mongoose.Schema(
                 required:true
             }
         }]
+    },{
+        timestamps:true
     }
 )
 
+userSchema.methods.toJSON = function(){
+    const userObj = this.toObject()
+
+    delete userObj.password
+    delete userObj.token
+
+    return userObj
+}
+
 userSchema.methods.generateJwtToken = async function(){
     const user = this
-    const token = jwt.sign({_id:user.id.toString()}, 'mystringtojsonwebtoken')
+    const token = jwt.sign({_id:user.id.toString()},'privateorpublickey',{ expiresIn: '1h'})
 
     user.token = user.token.concat({token})
     await user.save()
@@ -88,6 +100,19 @@ userSchema.pre("save", async function(next){
     next()
 });
 
+//// Delete Associated data with user using middleware
+userSchema.pre("remove",async function(next){
+    await task.deleteMany({author:this._id})
+    next()
+})
+
+
+//// create virtaul realtionship with tasks
+userSchema.virtual('tasks',{
+    ref: 'tasks',
+    localField: '_id',
+    foreignField: 'author'
+})
 
 const User = mongoose.model('User',userSchema)
 
